@@ -5,7 +5,7 @@ typedef unsigned int uint;
 
 
 #define TILEMAP_DIMX 32
-#define TILEMAP_DIMY 18
+#define TILEMAP_DIMY 24
 
 
 enum struct CellState {
@@ -25,6 +25,7 @@ public:
     Tilemap(const uint p_dimx, const uint p_dimy);
 
     CellState getCellState(const uint x, const uint y);
+    void setCellState(const uint x, const uint y, CellState new_state);
 
     uint getDimx() const;
     uint getDimy() const;

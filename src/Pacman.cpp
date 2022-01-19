@@ -7,6 +7,7 @@
 Pacman::Pacman() {
     x = 0;
     y = 0;
+    running = false;
     orientation = Orientation::RIGHT;
 }
 

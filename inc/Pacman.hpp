@@ -11,6 +11,7 @@ class Pacman {
 public:
 
     uint x, y;
+    bool running;
     Orientation orientation;
 
     Pacman();

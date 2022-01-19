@@ -34,6 +34,11 @@ CellState Tilemap::getCellState(const uint x, const uint y) {
 }
 
 
+void Tilemap::setCellState(const uint x, const uint y, CellState new_state) {
+    grid[getCoord(x, y)] = new_state;
+}
+
+
 uint Tilemap::getDimx() const { return TILEMAP_DIMX; }
 uint Tilemap::getDimy() const { return TILEMAP_DIMY; }
 

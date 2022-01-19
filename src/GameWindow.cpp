@@ -13,13 +13,13 @@ void GameWindow::testCommands() {
         if (keyboard_manager.testCommand(Commands::FULLSCREEN))
             toggleFullscreen();
         if (keyboard_manager.testCommand(Commands::UP))
-            pacman.move(Orientation::UP);
+            movePacman(Orientation::UP);
         if (keyboard_manager.testCommand(Commands::DOWN))
-            pacman.move(Orientation::DOWN);
+            movePacman(Orientation::DOWN);
         if (keyboard_manager.testCommand(Commands::RIGHT))
-            pacman.move(Orientation::RIGHT);
+            movePacman(Orientation::RIGHT);
         if (keyboard_manager.testCommand(Commands::LEFT))
-            pacman.move(Orientation::LEFT);
+            movePacman(Orientation::LEFT);
     }
     
 }
@@ -64,10 +64,36 @@ void GameWindow::drawTilemap() {
 
 void GameWindow::draw() {
     window->draw(getSprite(Sprites::BACKGROUND));
-    drawTilemap();
+    switch (game_state) {
+        case GameState::GAME:
+            drawTilemap();
+            updatePacmanSprite();
+            window->draw(getSprite(Sprites::PACMAN));
+            break;
+        case GameState::GAMEOVER:
+            window->draw(getSprite(Sprites::GAMEOVER));
+        default:
+            break;
+    }
+}
 
-    updatePacmanSprite();
-    window->draw(getSprite(Sprites::PACMAN));
+
+void GameWindow::movePacman(const Orientation orientation) {
+    pacman.move(orientation);
+    switch (tilemap.getCellState(pacman.x, pacman.y)){
+        case CellState::VOID:
+            tilemap.setCellState(pacman.x, pacman.y, CellState::PATH);
+            pacman.running = true;
+            break;
+        case CellState::WALL:
+            pacman.running = false;
+            break;
+        case CellState::PATH:
+        case CellState::PATH_R:
+            gameOver();
+            break;
+    }
+    
 }
 
 
@@ -96,16 +122,33 @@ void GameWindow::loop() {
                 break;
         }
     }
-    
+
+    if (game_state == GameState::GAME && pacman.running)
+        if (compter >= 3) {
+            movePacman(pacman.orientation);
+            compter = 0;
+        } else
+            compter++;
+
     window->clear();
     draw();
     window->display();
+
+    //while (timer < TICK_TIME);
+    timer = 0;
+}
+
+
+void GameWindow::gameOver() {
+    game_state = GameState::GAMEOVER;
 }
 
 
 GameWindow::GameWindow() {
+    compter = 0;
     srand(time(0));
     timer = 0.0f;
+    game_state = GameState::GAME;
     fullscreen_mode = false;
     window = new RenderWindow(VideoMode(WIDTH, HEIGHT), "PACXON");
     //window->setVerticalSyncEnabled(true);
@@ -113,6 +156,7 @@ GameWindow::GameWindow() {
 
     tile_sprite = new Sprite();
     sprites[Sprites::BACKGROUND] = new Sprite(*texture_set.getTexture(Textures::BACKGROUND));
+    sprites[Sprites::GAMEOVER] = new Sprite(*texture_set.getTexture(Textures::GAMEOVER));
     sprites[Sprites::PACMAN] = new Sprite(*texture_set.getTexture(Textures::PACMAN));
     sprites[Sprites::PACMAN]->setOrigin(CELL_SIZE/2, CELL_SIZE/2);
 }
@@ -120,8 +164,9 @@ GameWindow::GameWindow() {
 
 GameWindow::~GameWindow() {
     delete window;
-    delete sprites[Sprites::BACKGROUND];
     delete tile_sprite;
+    delete sprites[Sprites::BACKGROUND];
+    delete sprites[Sprites::GAMEOVER];
     delete sprites[Sprites::PACMAN];
 }
 
