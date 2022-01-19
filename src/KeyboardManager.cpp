@@ -12,6 +12,7 @@ KeyboardManager::KeyboardManager() {
     keymap[Commands::NO] = Keyboard::Key::BackSpace;
     keymap[Commands::STOP] = Keyboard::Key::F9;
     keymap[Commands::FULLSCREEN] = Keyboard::Key::F11;
+    keymap[Commands::GRID] = Keyboard::Key::G;
 }
 
 

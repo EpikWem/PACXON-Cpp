@@ -31,6 +31,7 @@ TextureSet::TextureSet() {
     textures[Textures::ICECREAM] = loadTexture("ice");
     textures[Textures::PACGOM] = loadTexture("pacgom");*/
     textures[Textures::VOID] = loadTexture("void");
+    textures[Textures::TRUE_VOID] = loadTexture("true_void");
     textures[Textures::WALL] = loadTexture("wall");
     textures[Textures::PATH] = loadTexture("path");
     textures[Textures::PATH_R] = loadTexture("path_r");

@@ -16,7 +16,7 @@ typedef unsigned int uint;
 
 enum Commands {
     UP, DOWN, RIGHT, LEFT, YES, NO,
-    STOP, FULLSCREEN
+    STOP, FULLSCREEN, GRID
 };
 
 

@@ -12,6 +12,8 @@ void GameWindow::testCommands() {
     else {
         if (keyboard_manager.testCommand(Commands::FULLSCREEN))
             toggleFullscreen();
+        if (keyboard_manager.testCommand(Commands::GRID))
+            toggleGrid();
         if (keyboard_manager.testCommand(Commands::UP))
             movePacman(Orientation::UP);
         if (keyboard_manager.testCommand(Commands::DOWN))
@@ -27,11 +29,16 @@ void GameWindow::testCommands() {
 
 void GameWindow::toggleFullscreen() {
     delete window;
-    if (fullscreen_mode)
+    if (fullscreen_mod)
         window = new RenderWindow(VideoMode(1280, 720), "PACXON");
     else
         window = new RenderWindow(VideoMode(1280, 720), "PACXON", Style::Fullscreen);
-    fullscreen_mode = !fullscreen_mode;
+    fullscreen_mod = !fullscreen_mod;
+}
+
+
+void GameWindow::toggleGrid() {
+    grid_mod = !grid_mod;
 }
 
 
@@ -44,7 +51,10 @@ void GameWindow::drawTilemap() {
             tile_sprite->setPosition(x*CELL_SIZE, y*CELL_SIZE);
             switch (tilemap.getCellState(x, y)) {
                 case CellState::VOID:
-                    tile_sprite->setTexture(*texture_set.getTexture(Textures::VOID));
+                    if (grid_mod)
+                        tile_sprite->setTexture(*texture_set.getTexture(Textures::VOID));
+                    else
+                        tile_sprite->setTexture(*texture_set.getTexture(Textures::TRUE_VOID));
                     break;
                 case CellState::WALL:
                     tile_sprite->setTexture(*texture_set.getTexture(Textures::WALL));
@@ -107,6 +117,13 @@ void GameWindow::loop() {
     timer += clock.getElapsedTime().asSeconds();
     clock.restart();
 
+    if (game_state == GameState::GAME && pacman.running)
+        if (compter >= 3) {
+            movePacman(pacman.orientation);
+            compter = 0;
+        } else
+            compter++;
+
     Event event;
     while (window->pollEvent(event)) {
         switch (event.type) {
@@ -122,13 +139,6 @@ void GameWindow::loop() {
                 break;
         }
     }
-
-    if (game_state == GameState::GAME && pacman.running)
-        if (compter >= 3) {
-            movePacman(pacman.orientation);
-            compter = 0;
-        } else
-            compter++;
 
     window->clear();
     draw();
@@ -149,7 +159,8 @@ GameWindow::GameWindow() {
     srand(time(0));
     timer = 0.0f;
     game_state = GameState::GAME;
-    fullscreen_mode = false;
+    fullscreen_mod = false;
+    grid_mod = true;
     window = new RenderWindow(VideoMode(WIDTH, HEIGHT), "PACXON");
     //window->setVerticalSyncEnabled(true);
     window->setFramerateLimit(60);

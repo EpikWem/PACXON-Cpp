@@ -40,7 +40,8 @@ private:
     float timer;
     Clock clock;
     GameState game_state;
-    bool fullscreen_mode;
+    bool fullscreen_mod;
+    bool grid_mod;
     KeyboardManager keyboard_manager;
     TextureSet texture_set;
     Tilemap tilemap;
@@ -51,6 +52,7 @@ private:
     Sprite getSprite(const Sprites id);
     void testCommands();
     void toggleFullscreen();
+    void toggleGrid();
     void drawTilemap();
     void draw();
     void movePacman(const Orientation orientation);
