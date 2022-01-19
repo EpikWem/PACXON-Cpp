@@ -36,33 +36,35 @@ void GameWindow::toggleFullscreen() {
 
 
 void GameWindow::drawTilemap() {
-    Sprite s;
+    /*for (uint i = 0; i < TILEMAP_DIMX*TILEMAP_DIMY; i++)
+        window->draw(*tilemap_sprites[i]);*/
+    //window->draw(getSprite(Sprites::FOREGROUND));
     for (uint y = 0; y < tilemap.getDimy(); y++) {
         for (uint x = 0; x < tilemap.getDimx(); x++) {
-            s.setPosition(x, y);
+            tile_sprite->setPosition(x*CELL_SIZE, y*CELL_SIZE);
             switch (tilemap.getCellState(x, y)) {
                 case CellState::VOID:
-                    s.setTexture(*texture_set.getTexture(Textures::VOID));
+                    tile_sprite->setTexture(*texture_set.getTexture(Textures::VOID));
                     break;
                 case CellState::WALL:
-                    s.setTexture(*texture_set.getTexture(Textures::WALL));
+                    tile_sprite->setTexture(*texture_set.getTexture(Textures::WALL));
                     break;
                 case CellState::PATH:
-                    s.setTexture(*texture_set.getTexture(Textures::PATH));
+                    tile_sprite->setTexture(*texture_set.getTexture(Textures::PATH));
                     break;
                 case CellState::PATH_R:
-                    s.setTexture(*texture_set.getTexture(Textures::PATH_R));
+                    tile_sprite->setTexture(*texture_set.getTexture(Textures::PATH_R));
                     break;
             }
-            window->draw(s);
+            window->draw(*tile_sprite);
         }
     }
 }
 
 
 void GameWindow::draw() {
-    window->draw(Sprite(*texture_set.getTexture(Textures::BACKGROUND)));
-    //drawTilemap();
+    window->draw(getSprite(Sprites::BACKGROUND));
+    drawTilemap();
 
     updatePacmanSprite();
     window->draw(getSprite(Sprites::PACMAN));
@@ -76,6 +78,9 @@ void GameWindow::updatePacmanSprite() {
 
 
 void GameWindow::loop() {
+    timer += clock.getElapsedTime().asSeconds();
+    clock.restart();
+
     Event event;
     while (window->pollEvent(event)) {
         switch (event.type) {
@@ -91,6 +96,7 @@ void GameWindow::loop() {
                 break;
         }
     }
+    
     window->clear();
     draw();
     window->display();
@@ -98,9 +104,15 @@ void GameWindow::loop() {
 
 
 GameWindow::GameWindow() {
+    srand(time(0));
+    timer = 0.0f;
     fullscreen_mode = false;
     window = new RenderWindow(VideoMode(WIDTH, HEIGHT), "PACXON");
-    window->setVerticalSyncEnabled(true);
+    //window->setVerticalSyncEnabled(true);
+    window->setFramerateLimit(60);
+
+    tile_sprite = new Sprite();
+    sprites[Sprites::BACKGROUND] = new Sprite(*texture_set.getTexture(Textures::BACKGROUND));
     sprites[Sprites::PACMAN] = new Sprite(*texture_set.getTexture(Textures::PACMAN));
     sprites[Sprites::PACMAN]->setOrigin(CELL_SIZE/2, CELL_SIZE/2);
 }
@@ -108,6 +120,8 @@ GameWindow::GameWindow() {
 
 GameWindow::~GameWindow() {
     delete window;
+    delete sprites[Sprites::BACKGROUND];
+    delete tile_sprite;
     delete sprites[Sprites::PACMAN];
 }
 
