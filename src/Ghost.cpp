@@ -35,7 +35,7 @@ Ghost::Ghost(const GhostType ghost_type) {
     dy = genDirection();
     switch (type) {
         case GhostType::PINKY:
-            speed = 2.0f;
+            speed = 3.0f;
             size = CELL_SIZE;
             break;
         case GhostType::INKY:
@@ -55,28 +55,16 @@ Ghost::Ghost(const GhostType ghost_type) {
 
 
 void Ghost::move(Tilemap tilemap) {
-    int nx = int(x + dx*speed);
-    int ny = int(y + dy*speed);
-
-    /*if (tilemap.getCellState(int(nx/CELL_SIZE), int(y/CELL_SIZE)) != CellState::VOID
-    && tilemap.getCellState(int(nx/CELL_SIZE), int(y/CELL_SIZE)) != CellState::LOCK)
-        x = nx;
-    else
+    x+= dx*speed;
+    if (tilemap.getCellState(uint(x/CELL_SIZE), uint(y/CELL_SIZE)) != CellState::VOID) {
         dx = -dx;
+        x+= dx*speed;
+    }
 
-    if (tilemap.getCellState(int(x/CELL_SIZE), int(ny/CELL_SIZE)) != CellState::VOID
-    && tilemap.getCellState(int(x/CELL_SIZE), int(ny/CELL_SIZE)) != CellState::LOCK)
-        y = ny;
-    else
-        dy = -dy;*/
-
-    if (nx < CELL_SIZE || nx > WIDTH-CELL_SIZE)
-        dx = -dx;
-    else
-        x = nx;
-    if (ny < CELL_SIZE || ny > HEIGHT-CELL_SIZE)
+    y+= dy*speed;
+    if (tilemap.getCellState(uint(x/CELL_SIZE), uint(y/CELL_SIZE)) != CellState::VOID) {
         dy = -dy;
-    else
-        y = ny;
+        y+= dy*speed;
+    }
 }
 

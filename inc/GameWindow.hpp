@@ -48,7 +48,6 @@ private:
     Sprite* pacman_sprite;
     Sprite* tile_sprite;
 
-    void createGhostsSprites();
     void testCommands();
     void toggleFullscreen();
     void toggleGrid();

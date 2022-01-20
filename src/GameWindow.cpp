@@ -1,14 +1,6 @@
 #include <GameWindow.hpp>
 
 
-void GameWindow::createGhostsSprites() {
-    for (uint i = 0; i < ghosts_number; i++) {
-        ghosts[i].second = new Sprite(*texture_set.getTexture(ghosts[i].first.type));
-        //printf("Created a Ghost with directions (%f, %f)\n", ghosts[i].first.dx, ghosts[i].first.dy);
-    }
-}
-
-
 void GameWindow::testCommands() {
     if (keyboard_manager.testCommand(Commands::STOP))
         window->close();
@@ -98,7 +90,9 @@ void GameWindow::movePacman(const Orientation orientation) {
 
 void GameWindow::updatePacmanSprite() {
     pacman_sprite->setRotation(pacman.getOrientationDegre());
-    pacman_sprite->setPosition(pacman.x*CELL_SIZE+CELL_SIZE/2, pacman.y*CELL_SIZE+CELL_SIZE/2);
+    pacman_sprite->setPosition(
+        pacman.x*CELL_SIZE + CELL_SIZE/2,
+        pacman.y*CELL_SIZE + CELL_SIZE/2);
 }
 
 
@@ -106,20 +100,16 @@ void GameWindow::updatePacmanSprite() {
 void GameWindow::updateGhostsSprite() {
     for (uint i = 0; i < ghosts_number; i++)
         ghosts[i].second->setPosition(
-            ghosts[i].first.x - ghosts[i].first.size/2,
-            ghosts[i].first.y - ghosts[i].first.size/2);
+            ghosts[i].first.x,
+            ghosts[i].first.y);
 }
 
 
 void GameWindow::fillVoid() {
     for (uint i = 0; i < ghosts_number; i++) {
         tilemap.tryLockCells(
-            uint((ghosts[i].first.x - ghosts[i].first.size/2)/CELL_SIZE),
-            uint((ghosts[i].first.y - ghosts[i].first.size/2)/CELL_SIZE));
-        //tilemap.tryLockCells(ghosts[i].first.getCenterTilemaped().first, ghosts[i].first.getCenterTilemaped().second);
-        /*printf("\nAs ghost placed at (%i,%i) :\n", ghosts[i].first.x, ghosts[i].first.y);
-        printf("Gonna lock (%i,%i)\n", int(WIDTH/ghosts[i].first.x), int(HEIGHT/ghosts[i].first.y));
-        system("pause");*/
+            uint((ghosts[i].first.x)/CELL_SIZE),
+            uint((ghosts[i].first.y)/CELL_SIZE));
     }
     tilemap.fillVoids();
 }
@@ -172,26 +162,35 @@ void GameWindow::gameOver() {
 
 
 GameWindow::GameWindow() {
+    // init basic vars:
     compter = 0;
     timer = 0.0f;
     game_state = GameState::GAME;
     fullscreen_mod = false;
     grid_mod = true;
     
+    // init window:
     window = new RenderWindow(VideoMode(WIDTH, HEIGHT), "PACXON");
-    //window->setVerticalSyncEnabled(true);
     window->setFramerateLimit(60);
 
+    // init ghosts:
     ghosts_number = 2;
     ghosts[0].first = Ghost(GhostType::PINKY);
     ghosts[1].first = Ghost(GhostType::PINKY);
-    createGhostsSprites();
+    //ghosts[2].first = Ghost(GhostType::BLINKY);
+    for (uint i = 0; i < ghosts_number; i++) {
+        ghosts[i].second = new Sprite(*texture_set.getTexture(ghosts[i].first.type));
+        ghosts[i].second->setOrigin(ghosts[i].first.size/2, ghosts[i].first.size/2);
+    }
 
+    //init pacman:
+    pacman_sprite = new Sprite(*texture_set.getTexture(Textures::PACMAN));
+    pacman_sprite->setOrigin(CELL_SIZE/2, CELL_SIZE/2);
+
+    // init other sprites:
     tile_sprite = new Sprite();
     background_sprite = new Sprite(*texture_set.getTexture(Textures::BACKGROUND));
     gameover_sprite = new Sprite(*texture_set.getTexture(Textures::GAMEOVER));
-    pacman_sprite = new Sprite(*texture_set.getTexture(Textures::PACMAN));
-    pacman_sprite->setOrigin(CELL_SIZE/2, CELL_SIZE/2);
 }
 
 
