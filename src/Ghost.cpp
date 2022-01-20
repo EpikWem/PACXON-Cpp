@@ -54,14 +54,27 @@ Ghost::Ghost(const GhostType ghost_type) {
 }
 
 
-void Ghost::move(const Tilemap tilemap) {
+void Ghost::move(Tilemap tilemap) {
     int nx = int(x + dx*speed);
     int ny = int(y + dy*speed);
-    if (nx < 0 || nx > TILEMAP_DIMX)
+
+    /*if (tilemap.getCellState(int(nx/CELL_SIZE), int(y/CELL_SIZE)) != CellState::VOID
+    && tilemap.getCellState(int(nx/CELL_SIZE), int(y/CELL_SIZE)) != CellState::LOCK)
+        x = nx;
+    else
+        dx = -dx;
+
+    if (tilemap.getCellState(int(x/CELL_SIZE), int(ny/CELL_SIZE)) != CellState::VOID
+    && tilemap.getCellState(int(x/CELL_SIZE), int(ny/CELL_SIZE)) != CellState::LOCK)
+        y = ny;
+    else
+        dy = -dy;*/
+
+    if (nx < CELL_SIZE || nx > WIDTH-CELL_SIZE)
         dx = -dx;
     else
         x = nx;
-    if (ny < 0 || ny > TILEMAP_DIMY)
+    if (ny < CELL_SIZE || ny > HEIGHT-CELL_SIZE)
         dy = -dy;
     else
         y = ny;

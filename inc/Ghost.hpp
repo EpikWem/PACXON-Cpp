@@ -4,6 +4,7 @@
 #include <Tilemap.hpp>
 
 #include <cstdlib>
+#include <utility>
 
 
 typedef unsigned int uint;
@@ -26,7 +27,7 @@ public:
     Ghost();
     Ghost(const GhostType type);
 
-    void move(const Tilemap tilemap);
+    void move(Tilemap tilemap);
 
 
 };

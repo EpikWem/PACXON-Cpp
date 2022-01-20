@@ -4,11 +4,7 @@
 void GameWindow::createGhostsSprites() {
     for (uint i = 0; i < ghosts_number; i++) {
         ghosts[i].second = new Sprite(*texture_set.getTexture(ghosts[i].first.type));
-        /*ghosts[i].second->setOrigin(
-            ghosts[i].first.x + ghosts[i].first.size/2,
-            ghosts[i].first.y + ghosts[i].first.size/2
-        );*/
-        printf("Created a Ghost with directions (%f, %f)\n", ghosts[i].first.dx, ghosts[i].first.dy);
+        //printf("Created a Ghost with directions (%f, %f)\n", ghosts[i].first.dx, ghosts[i].first.dy);
     }
 }
 
@@ -117,7 +113,10 @@ void GameWindow::updateGhostsSprite() {
 
 void GameWindow::fillVoid() {
     for (uint i = 0; i < ghosts_number; i++) {
-        tilemap.tryLockCells(int(ghosts[i].first.x/CELL_SIZE), int(ghosts[i].first.y/CELL_SIZE));
+        tilemap.tryLockCells(
+            uint((ghosts[i].first.x - ghosts[i].first.size/2)/CELL_SIZE),
+            uint((ghosts[i].first.y - ghosts[i].first.size/2)/CELL_SIZE));
+        //tilemap.tryLockCells(ghosts[i].first.getCenterTilemaped().first, ghosts[i].first.getCenterTilemaped().second);
         /*printf("\nAs ghost placed at (%i,%i) :\n", ghosts[i].first.x, ghosts[i].first.y);
         printf("Gonna lock (%i,%i)\n", int(WIDTH/ghosts[i].first.x), int(HEIGHT/ghosts[i].first.y));
         system("pause");*/
