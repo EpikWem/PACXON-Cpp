@@ -1,10 +1,14 @@
 #pragma once
 
 
+#include <Ghost.hpp>
+#include <Tilemap.hpp>
+
 #include <SFML/Graphics.hpp>
 
 #include <map>
 #include <string.h>
+
 
 using namespace sf;
 typedef unsigned int uint;
@@ -36,6 +40,8 @@ public:
     ~TextureSet();
 
     Texture* getTexture(const Textures id);
+    Texture* getTexture(const CellState cell_state, const bool grid_mod);
+    Texture* getTexture(const GhostType ghost_type);
 
 
 };

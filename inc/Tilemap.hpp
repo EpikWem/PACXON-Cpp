@@ -9,7 +9,7 @@ typedef unsigned int uint;
 
 
 enum struct CellState {
-    VOID, WALL, PATH, PATH_R
+    VOID, WALL, PATH, PATH_R, LOCK
 };
 
 
@@ -23,6 +23,10 @@ public:
 
     Tilemap();
     Tilemap(const uint p_dimx, const uint p_dimy);
+
+    
+    void tryLockCells(const uint x, const uint y);
+    void fillVoids();
 
     CellState getCellState(const uint x, const uint y);
     void setCellState(const uint x, const uint y, CellState new_state);

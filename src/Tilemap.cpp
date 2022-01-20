@@ -6,12 +6,7 @@
 
 
 uint getCoord(const uint x, const uint y) {
-    if (x >= TILEMAP_DIMX || y >= TILEMAP_DIMY) {
-        printf("\nERROR: Gave invalid coordinates to Tilemap.getCellState(): (%i,%i)\n\n", x, y);
-        system("pause");
-        return 0;
-    } else
-        return (y*TILEMAP_DIMX + x);
+    return (y*TILEMAP_DIMX + x);
 }
 
 
@@ -22,10 +17,32 @@ Tilemap::Tilemap() {
                 grid[getCoord(x, y)] = CellState::WALL;
             else
                 grid[getCoord(x, y)] = CellState::VOID;
-            //printf("%i ", grid[y*dimx + x]);
         }
-        //printf("\n");
     }
+}
+
+
+void Tilemap::tryLockCells(const uint x, const uint y) {
+    if (getCellState(x, y) == CellState::VOID) {
+        setCellState(x, y, CellState::LOCK);
+        tryLockCells(x-1, y);
+        tryLockCells(x+1, y);
+        tryLockCells(x, y-1);
+        tryLockCells(x, y+1);
+    }
+}
+
+
+void Tilemap::fillVoids() {
+    for (uint y = 0; y < TILEMAP_DIMY; y++) {
+        for (uint x = 0; x < TILEMAP_DIMX; x++) {
+            if (getCellState(x, y) != CellState::LOCK)
+                grid[getCoord(x, y)] = CellState::WALL;
+            else
+                grid[getCoord(x, y)] = CellState::VOID;
+        }
+    }
+            
 }
 
 

@@ -4,15 +4,14 @@
 Texture* TextureSet::loadTexture(const char file[]) {
     return loadTexture("default", file);
 }
+
 Texture* TextureSet::loadTexture(const char pack[], const char file[]) {
     std::string path = IMAGES_FOLDER + "/" + pack + "/" + file + ".png";
     Texture* texture = new Texture();
     if(!texture->loadFromFile(path)) {
         printf("\nERROR: Failed to load texture\n\n");
         system("exit");
-    }/* else {
-        printf("DEBUG: Successfully loaded texture from:%s\n", path.c_str());
-    }*/
+    }
     return texture;
 }
 
@@ -52,6 +51,7 @@ TextureSet::~TextureSet() {
     delete textures[Textures::ICECREAM];
     delete textures[Textures::PACGOM];*/
     delete textures[Textures::VOID];
+    delete textures[Textures::TRUE_VOID];
     delete textures[Textures::WALL];
     delete textures[Textures::PATH];
     delete textures[Textures::PATH_R];
@@ -60,5 +60,47 @@ TextureSet::~TextureSet() {
 
 Texture* TextureSet::getTexture(const Textures id) {
     return textures[id];
+}
+
+Texture* TextureSet::getTexture(const CellState cell_state, const bool grid_mod) {
+    switch (cell_state) {
+        case CellState::VOID:
+            if (grid_mod)
+                return getTexture(Textures::VOID);
+            else
+                return getTexture(Textures::TRUE_VOID);
+            break;
+        case CellState::WALL:
+            return getTexture(Textures::WALL);
+            break;
+        case CellState::PATH:
+            return getTexture(Textures::PATH);
+            break;
+        case CellState::PATH_R:
+            return getTexture(Textures::PATH_R);
+            break;
+        default:
+            return getTexture(Textures::VOID);
+            break;
+    }
+}
+
+Texture* TextureSet::getTexture(const GhostType ghost_type) {
+    switch (ghost_type) {
+        case GhostType::PINKY:
+            return getTexture(Textures::PINKY);
+            break;
+        case GhostType::INKY:
+            return getTexture(Textures::INKY);
+            break;
+        case GhostType::CLYDE:
+            return getTexture(Textures::CLYDE);
+            break;
+        case GhostType::BLINKY:
+            return getTexture(Textures::BLINKY);
+            break;
+        default:
+            return getTexture(GhostType::PINKY);
+    }
 }
 
