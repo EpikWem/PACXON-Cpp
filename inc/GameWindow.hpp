@@ -23,49 +23,78 @@ typedef unsigned int uint;
 
 
 enum struct GameState {
-    MENU, PAUSE, GAME, GAMEOVER
+    MENU, PAUSE, GAME, GAMEOVER, STOP
+};
+
+enum struct MenuState {
+    PLAY, SETTINGS, QUIT
 };
 
 
 class GameWindow {
 private:
 
+
     RenderWindow* window;
     uint compter;
     float timer;
     Clock clock;
+
     GameState game_state;
+    MenuState menu_state;
+
     bool fullscreen_mod;
     bool grid_mod;
+    uint score;
+    bool returned_to_wall;
+
     KeyboardManager keyboard_manager;
     TextureSet texture_set;
     Tilemap tilemap;
+
     Pacman pacman;
     std::pair<Ghost, Sprite*> ghosts[8];
     uint ghosts_number;
+
     Sprite* background_sprite;
+    Sprite* title_sprite;
+    Sprite* title_choice_sprite;
     Sprite* gameover_sprite;
     Sprite* pacman_sprite;
     Sprite* tile_sprite;
 
+
     void testCommands();
     void toggleFullscreen();
     void toggleGrid();
-    void drawTilemap();
-    void draw();
+
+    void displayMenu();
+    void displayGame();
+    void displayGameOver();
+
+    void moveMenu(const Orientation orientation);
     void movePacman(const Orientation orientation);
     void updatePacmanSprite();
     void updateGhostsSprite();
+
     void fillVoid();
-    void loop();
-    void gameOver();
+    void reloadScore();
+
+    void updateDatas();
+    void triggerEvents();
+
+    void drawTilemap();
+    void draw();
 
 
 public:
 
+
     GameWindow();
     ~GameWindow();
+
     void run();
+    void close();
 
 
 };

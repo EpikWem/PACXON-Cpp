@@ -9,6 +9,7 @@ Pacman::Pacman() {
     y = 0;
     running = false;
     orientation = Orientation::RIGHT;
+    lives = 3;
 }
 
 
@@ -33,5 +34,20 @@ void Pacman::move(const Orientation direction) {
     if (y > TILEMAP_DIMY-1)
         y = ly;
     orientation = direction;
+}
+
+
+float Pacman::getOrientationDegre() {
+    return int(orientation)*90.0f;
+}
+
+
+bool Pacman::kill() {
+    x = 0; y = 0;
+    lives--;
+    if (lives <= 0)
+        return true;
+    else
+        return false;
 }
 

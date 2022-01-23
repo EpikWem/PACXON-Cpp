@@ -41,8 +41,17 @@ void Tilemap::fillVoids() {
             else
                 grid[getCoord(x, y)] = CellState::VOID;
         }
-    }
-            
+    }           
+}
+
+
+uint Tilemap::getFillingScore() {
+    uint nw = 0;
+    for (uint y = 0; y < TILEMAP_DIMY; y++)
+        for (uint x = 0; x < TILEMAP_DIMX; x++)
+            if (getCellState(x, y) == CellState::WALL)
+                nw++;
+    return (100*nw)/(TILEMAP_DIMX*TILEMAP_DIMY);
 }
 
 

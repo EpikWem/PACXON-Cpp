@@ -26,7 +26,7 @@ public:
     Ghost();
     Ghost(const GhostType type);
 
-    void move(Tilemap tilemap);
+    void move(Tilemap &tilemap);
 
 
 };

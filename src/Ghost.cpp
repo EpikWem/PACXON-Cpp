@@ -4,22 +4,11 @@
 #include <GameWindow.hpp>
 
 
-float genDirection() {
-    switch (rand()%4) {
-        case 0:
-            return -1.0f;
-            break;
-        case 1:
-            return -0.5f;
-            break;
-        case 2:
-            return 0.5f;
-            break;
-        case 3:
-        default:
-            return 1.0f;
-            break;
-    }
+int genDirection() {
+    int d = 0;
+    while(d == 0)
+        d = 4 - rand()%8;
+    return d;
 }
 
 
@@ -29,13 +18,13 @@ Ghost::Ghost() {
 
 Ghost::Ghost(const GhostType ghost_type) {
     type = ghost_type;
-    x = rand()%(WIDTH-CELL_SIZE) + CELL_SIZE;
-    y = rand()%(HEIGHT-CELL_SIZE) + CELL_SIZE;
+    x = 2*CELL_SIZE + rand()%(WIDTH - 2*CELL_SIZE);
+    y = 2*CELL_SIZE + rand()%(HEIGHT - 2*CELL_SIZE);
     dx = genDirection();
     dy = genDirection();
     switch (type) {
         case GhostType::PINKY:
-            speed = 3.0f;
+            speed = 2.0f;
             size = CELL_SIZE;
             break;
         case GhostType::INKY:
@@ -54,15 +43,22 @@ Ghost::Ghost(const GhostType ghost_type) {
 }
 
 
-void Ghost::move(Tilemap tilemap) {
+void Ghost::move(Tilemap &tilemap) {
     x+= dx*speed;
-    if (tilemap.getCellState(uint(x/CELL_SIZE), uint(y/CELL_SIZE)) != CellState::VOID) {
+    uint tx = uint(x/CELL_SIZE);
+    uint ty = uint(y/CELL_SIZE);
+    if (tilemap.getCellState(tx, ty) != CellState::VOID) {
+        if (tilemap.getCellState(tx, ty) == CellState::PATH)
+            tilemap.setCellState(tx, ty, CellState::PATH_R);
         dx = -dx;
         x+= dx*speed;
     }
 
     y+= dy*speed;
-    if (tilemap.getCellState(uint(x/CELL_SIZE), uint(y/CELL_SIZE)) != CellState::VOID) {
+    ty = uint(y/CELL_SIZE);
+    if (tilemap.getCellState(tx, ty) != CellState::VOID) {
+        if (tilemap.getCellState(tx, ty) == CellState::PATH)
+            tilemap.setCellState(tx, ty, CellState::PATH_R);
         dy = -dy;
         y+= dy*speed;
     }

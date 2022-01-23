@@ -19,6 +19,7 @@ Texture* TextureSet::loadTexture(const char pack[], const char file[]) {
 TextureSet::TextureSet() {
     textures[Textures::BACKGROUND] = loadTexture("background");
     textures[Textures::TITLE] = loadTexture("title");
+    textures[Textures::TITLE_CHOICE] = loadTexture("selection");
     textures[Textures::GAMEOVER] = loadTexture("gameover");
     textures[Textures::PACMAN] = loadTexture("pacman");
     textures[Textures::BLINKY] = loadTexture("blinky");
@@ -40,6 +41,7 @@ TextureSet::TextureSet() {
 TextureSet::~TextureSet() {
     delete textures[Textures::BACKGROUND];
     delete textures[Textures::TITLE];
+    delete textures[Textures::TITLE_CHOICE];
     delete textures[Textures::GAMEOVER];
     delete textures[Textures::PACMAN];
     delete textures[Textures::BLINKY];
