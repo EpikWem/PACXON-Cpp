@@ -28,6 +28,7 @@ public:
     void tryLockCells(const uint x, const uint y);
     void fillVoids();
     uint getFillingScore();
+    void resetPath();
 
     CellState getCellState(const uint x, const uint y);
     void setCellState(const uint x, const uint y, CellState new_state);

@@ -3,6 +3,9 @@
         "cmath": "cpp",
         "*.tcc": "cpp",
         "fstream": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "new": "cpp",
+        "memory": "cpp",
+        "random": "cpp"
     }
 }

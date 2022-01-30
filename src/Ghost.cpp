@@ -17,14 +17,15 @@ Ghost::Ghost() {
 }
 
 Ghost::Ghost(const GhostType ghost_type) {
+    const uint D = 2*CELL_SIZE;
     type = ghost_type;
-    x = 2*CELL_SIZE + rand()%(WIDTH - 2*CELL_SIZE);
-    y = 2*CELL_SIZE + rand()%(HEIGHT - 2*CELL_SIZE);
+    x = D + rand()%(WIDTH-D - D);
+    y = D + rand()%(HEIGHT-D - D);
     dx = genDirection();
     dy = genDirection();
     switch (type) {
         case GhostType::PINKY:
-            speed = 2.0f;
+            speed = 1.7f;
             size = CELL_SIZE;
             break;
         case GhostType::INKY:
@@ -32,7 +33,7 @@ Ghost::Ghost(const GhostType ghost_type) {
             size = CELL_SIZE;
             break;
         case GhostType::CLYDE:
-            speed = 1.6f;
+            speed = 1.5f;
             size = CELL_SIZE;
             break;
         case GhostType::BLINKY:
@@ -44,6 +45,7 @@ Ghost::Ghost(const GhostType ghost_type) {
 
 
 void Ghost::move(Tilemap &tilemap) {
+
     x+= dx*speed;
     uint tx = uint(x/CELL_SIZE);
     uint ty = uint(y/CELL_SIZE);
@@ -55,6 +57,7 @@ void Ghost::move(Tilemap &tilemap) {
     }
 
     y+= dy*speed;
+    tx = uint(x/CELL_SIZE);
     ty = uint(y/CELL_SIZE);
     if (tilemap.getCellState(tx, ty) != CellState::VOID) {
         if (tilemap.getCellState(tx, ty) == CellState::PATH)
@@ -62,5 +65,6 @@ void Ghost::move(Tilemap &tilemap) {
         dy = -dy;
         y+= dy*speed;
     }
+
 }
 

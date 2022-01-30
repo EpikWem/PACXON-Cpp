@@ -55,6 +55,15 @@ uint Tilemap::getFillingScore() {
 }
 
 
+
+void Tilemap::resetPath() {
+    for (uint y = 0; y < TILEMAP_DIMY; y++)
+        for (uint x = 0; x < TILEMAP_DIMX; x++)
+            if (getCellState(x, y) == CellState::PATH || getCellState(x, y) == CellState::PATH_R)
+                setCellState(x, y, CellState::VOID);
+}
+
+
 CellState Tilemap::getCellState(const uint x, const uint y) {
     return grid[getCoord(x, y)];
 }

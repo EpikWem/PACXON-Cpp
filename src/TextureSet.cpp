@@ -21,15 +21,16 @@ TextureSet::TextureSet() {
     textures[Textures::TITLE] = loadTexture("title");
     textures[Textures::TITLE_CHOICE] = loadTexture("selection");
     textures[Textures::GAMEOVER] = loadTexture("gameover");
+    textures[Textures::WIN] = loadTexture("win");
     textures[Textures::PACMAN] = loadTexture("pacman");
     textures[Textures::BLINKY] = loadTexture("blinky");
     textures[Textures::INKY] = loadTexture("inky");
     textures[Textures::PINKY] = loadTexture("pinky");
     textures[Textures::CLYDE] = loadTexture("clyde");
-    /*textures[Textures::CHERRY] = loadTexture("cherry");
+    textures[Textures::CHERRY] = loadTexture("cherry");
     textures[Textures::BANANA] = loadTexture("banana");
-    textures[Textures::ICECREAM] = loadTexture("ice");
-    textures[Textures::PACGOM] = loadTexture("pacgom");*/
+    textures[Textures::STRAWBERRY] = loadTexture("strawberry");
+    textures[Textures::PACGUM] = loadTexture("pacgum");
     textures[Textures::VOID] = loadTexture("void");
     textures[Textures::TRUE_VOID] = loadTexture("true_void");
     textures[Textures::WALL] = loadTexture("wall");
@@ -43,15 +44,16 @@ TextureSet::~TextureSet() {
     delete textures[Textures::TITLE];
     delete textures[Textures::TITLE_CHOICE];
     delete textures[Textures::GAMEOVER];
+    delete textures[Textures::WIN];
     delete textures[Textures::PACMAN];
     delete textures[Textures::BLINKY];
     delete textures[Textures::INKY];
     delete textures[Textures::PINKY];
     delete textures[Textures::CLYDE];
-    /*delete textures[Textures::CHERRY];
+    delete textures[Textures::CHERRY];
     delete textures[Textures::BANANA];
-    delete textures[Textures::ICECREAM];
-    delete textures[Textures::PACGOM];*/
+    delete textures[Textures::STRAWBERRY];
+    delete textures[Textures::PACGUM];
     delete textures[Textures::VOID];
     delete textures[Textures::TRUE_VOID];
     delete textures[Textures::WALL];

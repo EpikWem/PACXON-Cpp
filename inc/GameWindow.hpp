@@ -6,6 +6,7 @@
 #include <Tilemap.hpp>
 #include <Pacman.hpp>
 #include <Ghost.hpp>
+#include <Menu.hpp>
 
 #include <SFML/Graphics.hpp>
 
@@ -20,14 +21,11 @@ typedef unsigned int uint;
 #define HEIGHT 960
 #define CELL_SIZE 40
 #define TICK_TIME 0.07f
+#define SCORE_TO_WIN 90
 
 
 enum struct GameState {
-    MENU, PAUSE, GAME, GAMEOVER, STOP
-};
-
-enum struct MenuState {
-    PLAY, SETTINGS, QUIT
+    MENU, PAUSE, GAME, GAMEOVER, WIN, STOP
 };
 
 
@@ -35,31 +33,33 @@ class GameWindow {
 private:
 
 
+    Font font;
+
     RenderWindow* window;
     uint compter;
     float timer;
     Clock clock;
 
     GameState game_state;
-    MenuState menu_state;
 
     bool fullscreen_mod;
     bool grid_mod;
     uint score;
+    Text label_score;
     bool returned_to_wall;
 
     KeyboardManager keyboard_manager;
     TextureSet texture_set;
     Tilemap tilemap;
+    Menu menu;
 
     Pacman pacman;
     std::pair<Ghost, Sprite*> ghosts[8];
     uint ghosts_number;
 
     Sprite* background_sprite;
-    Sprite* title_sprite;
-    Sprite* title_choice_sprite;
     Sprite* gameover_sprite;
+    Sprite* win_sprite;
     Sprite* pacman_sprite;
     Sprite* tile_sprite;
 
@@ -71,14 +71,14 @@ private:
     void displayMenu();
     void displayGame();
     void displayGameOver();
+    void displayWin();
 
-    void moveMenu(const Orientation orientation);
     void movePacman(const Orientation orientation);
     void updatePacmanSprite();
     void updateGhostsSprite();
 
     void fillVoid();
-    void reloadScore();
+    bool reloadScore();
 
     void updateDatas();
     void triggerEvents();

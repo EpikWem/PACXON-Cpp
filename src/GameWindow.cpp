@@ -24,15 +24,19 @@ void GameWindow::testCommands() {
                 break;
             case GameState::MENU:
                 if (keyboard_manager.testCommand(Commands::UP))
-                    moveMenu(Orientation::UP);
+                    menu.moveMenu(Orientation::UP);
                 if (keyboard_manager.testCommand(Commands::DOWN))
-                    moveMenu(Orientation::DOWN);
+                    menu.moveMenu(Orientation::DOWN);
                 if (keyboard_manager.testCommand(Commands::YES)) {
-                    if (menu_state == MenuState::PLAY)
+                    if (menu.getState() == MenuState::PLAY)
                         displayGame();
-                    else if (menu_state == MenuState::QUIT)
+                    else if (menu.getState() == MenuState::QUIT)
                         close();
                 }
+                break;
+            case GameState::WIN:
+                if (keyboard_manager.testCommand(Commands::YES))
+                    displayMenu();
                 break;
             default:
                 break;
@@ -62,7 +66,7 @@ void GameWindow::toggleGrid() {
 
 void GameWindow::displayMenu() {
     game_state = GameState::MENU;
-    menu_state = MenuState::PLAY;
+    menu.reset();
 }
 
 
@@ -76,35 +80,15 @@ void GameWindow::displayGameOver() {
 }
 
 
+void GameWindow::displayWin() {
+    game_state = GameState::WIN;
+}
+
+
 //=============================================================================
 
 
-void GameWindow::moveMenu(const Orientation orientation) {
-    if (orientation == Orientation::DOWN || orientation == Orientation::UP) {
-        switch (menu_state) {
-            case MenuState::PLAY:
-                if (orientation == Orientation::DOWN)
-                    menu_state = MenuState::SETTINGS;
-                break;
-            case MenuState::SETTINGS:
-                if (orientation == Orientation::UP)
-                    menu_state = MenuState::PLAY;
-                else
-                    menu_state = MenuState::QUIT;
-                break;
-            case MenuState::QUIT:
-                if (orientation == Orientation::UP)
-                    menu_state = MenuState::SETTINGS;
-                break;
-            default:
-                break;
-        }
-    }
-    uint ims = (menu_state == MenuState::PLAY ? 0 : (menu_state == MenuState::SETTINGS ? 1 : 2));
-    title_choice_sprite->setPosition(
-        WIDTH/2 - 420/2,
-        416 + 81*ims);
-}
+
 
 
 void GameWindow::movePacman(const Orientation orientation) {
@@ -157,8 +141,11 @@ void GameWindow::fillVoid() {
 }
 
 
-void GameWindow::reloadScore() {
+// Return TRUE if Won by score !
+bool GameWindow::reloadScore() {
     score = tilemap.getFillingScore();
+    label_score.setString(std::to_string(score) + "%");
+    return score >= SCORE_TO_WIN;
 }
 
 
@@ -176,7 +163,8 @@ void GameWindow::updateDatas() {
                 compter++;
         } else {
             fillVoid();
-            reloadScore();
+            if (reloadScore())
+                displayWin();
         }
 
         for (uint i = 0; i < ghosts_number; i++)
@@ -215,9 +203,11 @@ void GameWindow::drawTilemap() {
             tile_sprite->setTexture(*texture_set.getTexture(tilemap.getCellState(x, y), grid_mod));
             window->draw(*tile_sprite);
             
-            if (tilemap.getCellState(x, y) == CellState::PATH_R)
+            if (tilemap.getCellState(x, y) == CellState::PATH_R) {
+                tilemap.resetPath();
                 if (pacman.kill())
                     displayGameOver();
+            }
         }
     }
 }
@@ -226,8 +216,7 @@ void GameWindow::drawTilemap() {
 void GameWindow::draw() {
     switch (game_state) {
         case GameState::MENU:
-            window->draw(*title_sprite);
-            window->draw(*title_choice_sprite);
+            menu.draw();
             break;
         case GameState::GAME:
             window->draw(*background_sprite);
@@ -237,9 +226,14 @@ void GameWindow::draw() {
             window->draw(*pacman_sprite);
             for (uint i = 0; i < ghosts_number; i++)
                 window->draw(*ghosts[i].second);
+            window->draw(label_score);
             break;
         case GameState::GAMEOVER:
             window->draw(*gameover_sprite);
+            break;
+        case GameState::WIN:
+            window->draw(*win_sprite);
+            break;
         default:
             break;
     }
@@ -250,24 +244,33 @@ void GameWindow::draw() {
 
 
 GameWindow::GameWindow() {
+    
     // init basic vars:
+    if (!font.loadFromFile("../res/emulogic.ttf"))
+        printf("ERROR: cant load font from ttf file...");
     compter = 0;
     timer = 0.0f;
     game_state = GameState::MENU;
-    menu_state = MenuState::PLAY;
     fullscreen_mod = false;
     grid_mod = true;
     score = 0;
+    label_score.setFont(font);
+    label_score.setCharacterSize(24);
+    label_score.setFillColor(Color::White);
+    label_score.setStyle(Text::Bold);
+    label_score.setPosition(WIDTH-80, 8);
     returned_to_wall = true;
     
     // init window:
     window = new RenderWindow(VideoMode(WIDTH, HEIGHT), "PACXON");
     window->setFramerateLimit(60);
+    menu.setWindow(window);
 
     // init ghosts:
-    ghosts_number = 2;
+    ghosts_number = 3;
     ghosts[0].first = Ghost(GhostType::PINKY);
     ghosts[1].first = Ghost(GhostType::PINKY);
+    ghosts[2].first = Ghost(GhostType::PINKY);
     for (uint i = 0; i < ghosts_number; i++) {
         ghosts[i].second = new Sprite(*texture_set.getTexture(ghosts[i].first.type));
         ghosts[i].second->setOrigin(ghosts[i].first.size/2, ghosts[i].first.size/2);
@@ -280,9 +283,8 @@ GameWindow::GameWindow() {
     // init other sprites:
     tile_sprite = new Sprite();
     background_sprite = new Sprite(*texture_set.getTexture(Textures::BACKGROUND));
-    title_sprite = new Sprite(*texture_set.getTexture(Textures::TITLE));
-    title_choice_sprite = new Sprite(*texture_set.getTexture(Textures::TITLE_CHOICE));
     gameover_sprite = new Sprite(*texture_set.getTexture(Textures::GAMEOVER));
+    win_sprite = new Sprite(*texture_set.getTexture(Textures::WIN));
 }
 
 
@@ -290,9 +292,8 @@ GameWindow::~GameWindow() {
     delete window;
     delete tile_sprite;
     delete background_sprite;
-    delete title_sprite;
-    delete title_choice_sprite;
     delete gameover_sprite;
+    delete win_sprite;
     delete pacman_sprite;
     for (uint i = 0; i < 8; i++)
         delete ghosts[i].second;
@@ -300,7 +301,7 @@ GameWindow::~GameWindow() {
 
 
 void GameWindow::run() {
-    moveMenu(Orientation::RIGHT);
+    menu.moveMenu(Orientation::RIGHT);
     while (window->isOpen()) {
 
         // UPDATE TIMER
